@@ -4,6 +4,7 @@ description: 稳定的飞书文档写入工具，支持大量关键词和图片�
 read_when:
   - 需要将 trends-valid 结果写入飞书文档
   - 需要批量写入大量内容到飞书
+  - 需要把结构化 JSON 写成飞书原生表格
 metadata: {"clawdbot":{"emoji":"📝"}}
 ---
 
@@ -29,6 +30,18 @@ metadata: {"clawdbot":{"emoji":"📝"}}
 # 示例
 ./write-valid-doc.sh /path/to/trends-valid-result.json
 ```
+
+### 写入原生表格
+
+```bash
+./scripts/write-table-doc.sh --input /absolute/path/table.json --title "可选标题"
+```
+
+输入 JSON 使用 `title`、`subtitle`、`headers`、`rows` 和 `col_widths`。`headers` 必须是非空数组，`rows` 的每一行必须与 `headers` 列数一致；传入 `col_widths` 时，其长度也必须与 `headers` 一致。
+
+**飞书 Docx 原生表格只允许 `1～8` 列。实测 `8` 列创建成功，`10` 列返回 `1770001 invalid param`，`9` 列不作为支持边界。**第 `9` 列及以上会在调用飞书 API 前以退出码 `2` 停止，不创建文档，也不会静默截断字段。
+
+初始表格最多创建 `9` 行，其中 `1` 行为表头。超过 `8` 行的数据由 `lib/feishu-api.sh` 的 `create_table_with_data` 继续追加，不会因初始行数限制被截断。
 
 ## 输出格式
 
