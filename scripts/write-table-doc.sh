@@ -75,7 +75,7 @@ if [ "$ROWS_TYPE" != "array" ]; then
   exit 1
 fi
 
-ROW_VALIDATION=$(jq --argjson cols "$COL_COUNT" '
+ROW_VALIDATION=$(jq -r --argjson cols "$COL_COUNT" '
   if all(.rows[]; type == "array" and length == $cols) then
     "valid"
   else
